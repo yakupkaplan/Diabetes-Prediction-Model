@@ -2,22 +2,39 @@
 
 In this project we will try to predict if the person has diabetes has or not.
 
-Steps for Exploratory Data Analysis, Data Visualization, Data Preprocessing and Feature Engineering:
+Steps for __Exploratory Data Analysis, Data Visualization, Data Preprocessing and Feature Engineering__:
 
     - GENERAL / GENERAL OVERVIEW / GENERAL PICTURE
+    
     - NUMERICAL VARIABLE ANALYSIS
         describe with quantiles to see whether there are extraordinary values or not
         Basic visualization by using histograms
+        
     - TARGET ANALYSIS
-        Target analysis according to categorical variables --> target_summary_with_cats()
-        Target analysis according to numerical variables --> target_summary_with_nums()
+        Target analysis according to categorical variables 
+        Target analysis according to numerical variables 
+        
     - ANALYSIS OF NUMERCIAL VARIABLES IN COMPARISON WITH EACH OTHER
         scatterplot
         lmplot
         correlation
-    - New Features Creation
-    - Outlier Analysis
-    - Missing Values Analysis
-    - Label and One Hot Encoding
-    - Standardization
-    - Saving the Dataset
+        
+    - OUTLIER ANALYSIS
+    
+    - MISSING VALUES ANALYSIS
+    
+    - NEW FEATURES CREATION    
+    
+    - LABEL AND ONE HOT ENCODING
+    
+    - STANDARDIZATION
+    
+    - SAVING THE DATASET
+    
+__MODELING__
+
+__MODEL EVALUATION__
+
+__MODEL TUNING__
+
+__PRESANTATION OF RESULTS__
