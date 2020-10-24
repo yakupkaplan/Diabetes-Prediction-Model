@@ -18,9 +18,9 @@ Steps for Exploratory Data Analysis, Data Visualization, Data Preprocessing and 
         scatterplot
         lmplot
         correlation
-    - New Features Creation
     - Outlier Analysis
     - Missing Values Analysis
+    - New Features Creation
     - Label and One Hot Encoding
     - Standardization
     - Saving the Dataset
@@ -129,19 +129,13 @@ sns.heatmap(data=correlation_matrix, cmap='coolwarm', annot=True, square=True);
 plt.show()
 
 
-## FEATURE CREATION
-
-# # Create BMI ranges
-# df['BMIRanges'] = pd.cut(x=df['BMI'], bins=[0, 18.5, 25, 30, 100], labels=["Underweight", "Healthy", "Overweight", "Obese"])
-
-
 ## OUTLIER ANALYSIS
 
 
 # Function to calculate outlier thresholds
 def outlier_thresholds(dataframe, variable):
-    quartile1 = dataframe[variable].quantile(0.10)
-    quartile3 = dataframe[variable].quantile(0.90)
+    quartile1 = dataframe[variable].quantile(0.05)
+    quartile3 = dataframe[variable].quantile(0.95)
     interquantile_range = quartile3 - quartile1
     up_limit = quartile3 + 1.5 * interquantile_range
     low_limit = quartile1 - 1.5 * interquantile_range
@@ -219,12 +213,62 @@ plt.show()
 msno.heatmap(df)
 plt.show()
 
-# Impute median values for missing values for numeral variables
-df = df.apply(lambda x: x.fillna(x.median()), axis=0)
+# Impute median values for missing values for numeral variables with respect to their class
+# df = df.apply(lambda x: x.fillna(x.median()), axis=0)
+for col in variables_with_na:
+    df[col] = df[col].fillna(df.groupby("Outcome")[col].transform("median"))
 
 # Check for missing values, again and control
 df.isnull().sum()
 df.isnull().sum().sum() # 0
+
+
+## FEATURE CREATION
+
+# Create BMI ranges
+df['BMIRanges'] = pd.cut(x=df['BMI'], bins=[0, 18.5, 25, 30, 100], labels=["Underweight", "Healthy", "Overweight", "Obese"])
+df['BMIRanges'] = df['BMIRanges'].astype(str)
+df.head()
+
+# See the results for the new feature
+df.groupby(["Outcome", "BMIRanges"]).describe()
+df[['BMIRanges']].value_counts()
+df.groupby(["BMIRanges"]).agg({"Outcome": [np.mean, np.count_nonzero, np.size]}) # Super!
+
+# See the counts for each class that we created
+sns.countplot(x='BMIRanges', hue='Outcome', data=df)
+plt.show()
+
+# # Create Age ranges --> young, mid_aged, old
+# df['Age'].describe()
+# df['AgeRanges'] = pd.cut(x=df['Age'], bins=[15, 25, 65, 81], labels=["Young", "Mid_Aged", "Senior"])
+# df['AgeRanges'] = df['AgeRanges'].astype(str)
+# df.head()
+# # See the results for the new feature
+# df.groupby(["Outcome", "AgeRanges"]).describe()
+# df[['AgeRanges']].value_counts()
+# df.groupby(["AgeRanges"]).agg({"Outcome": [np.mean, np.count_nonzero, np.size]}) # Super!
+
+# Create Insulin/Glucose ranges --> low, normla, secret, high
+df['Glucose'].describe()
+df['GlucoseLevels'] = pd.cut(x=df['Glucose'], bins=[0, 70, 99, 126, 200], labels=["Low", "Normal", "Secret", "High"])
+df['GlucoseLevels'] = df['GlucoseLevels'].astype(str)
+df.head()
+
+# See the results for the new feature
+df.groupby(["Outcome", "GlucoseLevels"]).describe()
+df[['GlucoseLevels']].value_counts()
+df.groupby(["GlucoseLevels"]).agg({"Outcome": [np.mean, np.count_nonzero, np.size]}) # Super!
+
+# Create a feature that shows the ratio of pregnancies/age
+df['Pregnancies/Age'] = df['Pregnancies'] / df['Age']
+df['Pregnancies/Age'].describe()
+
+# See the results for the new feature
+sns.boxplot(x='Outcome', y='Pregnancies', data=df)
+plt.show()
+
+df.info()
 
 
 ## LABEL AND ONE HOT ENCODING
@@ -238,7 +282,7 @@ len(cat_cols)
 # Define a function to apply one hot encoding to categorical variables.
 def one_hot_encoder(dataframe, categorical_cols, nan_as_category=True):
     original_columns = list(dataframe.columns)
-    dataframe = pd.get_dummies(dataframe, columns=categorical_cols, dummy_na=nan_as_category, drop_first=True)
+    dataframe = pd.get_dummies(dataframe, columns=categorical_cols, dummy_na=False, drop_first=True)
     new_columns = [c for c in dataframe.columns if c not in original_columns]
     return dataframe, new_columns
 
@@ -246,6 +290,11 @@ def one_hot_encoder(dataframe, categorical_cols, nan_as_category=True):
 df, new_cols_ohe = one_hot_encoder(df, cat_cols)
 df.head()
 len(new_cols_ohe)
+
+df.info()
+
+# Export the dataset for later use by modeling
+df.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared.csv')
 
 
 # STANDARDIZATION
