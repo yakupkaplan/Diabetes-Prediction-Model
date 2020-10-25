@@ -4,7 +4,7 @@
 
 '''
 Steps to follow:
-    - Load the dsaved dataset
+    - Load the saved dataset
     - General View
     - Modeling
         - Base models: LogisticRegression, GaussianNB, KNeighborsClassifier, SVC, MLPClassifier, DecisionTreeClassifier,
@@ -250,6 +250,20 @@ base_models = [('LogisticRegression', LogisticRegression()),
                ("NGBoost", NGBClassifier(verbose=False))]
 
 evaluate_classification_model_holdout(base_models)
+# LogisticRegression: 0.805195
+# Naive Bayes: 0.603896
+# KNN: 0.850649
+# SVM: 0.837662
+# ANN: 0.850649
+# CART: 0.824675
+# BaggedTrees: 0.857143
+# RF: 0.876623
+# AdaBoost: 0.883117
+# GBM: 0.870130
+# XGBoost: 0.883117
+# LightGBM: 0.857143
+# CatBoost: 0.863636
+# NGBoost: 0.863636
 
 
 # For some distance-based models, we need to scale the features in order to
@@ -259,21 +273,21 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import RobustScaler, StandardScaler, MinMaxScaler
 
 # LogisticRegression with make_pipeline
-logreg = make_pipeline(RobustScaler(), LogisticRegression())
-evaluate_classification_model_holdout([('LogisticRegression', logreg)]) # 0.779 instead of 0.818
+logreg = make_pipeline(MinMaxScaler(), LogisticRegression())
+evaluate_classification_model_holdout([('LogisticRegression', logreg)]) # 0.805 instead of  0.805195
 
 
 # KNN with make_pipeline
 knn = make_pipeline(RobustScaler(), KNeighborsClassifier())
-evaluate_classification_model_holdout([('KNN', knn)]) # 0.857 instead of 0.818
+evaluate_classification_model_holdout([('KNN', knn)]) # 0.857 instead of 0.850649
 
 # SVC with make_pipeline
 svc = make_pipeline(RobustScaler(), SVC())
-evaluate_classification_model_holdout([('SVM', svc)]) # 0.877 instead of 0.812
+evaluate_classification_model_holdout([('SVM', svc)]) # 0.864 instead of 0.837662
 
 # ANN with make_pipeline
-ann = make_pipeline(RobustScaler(), MLPClassifier())
-evaluate_classification_model_holdout([('ANN', ann)]) # 0.870 instead of 0.760
+ann = make_pipeline(StandardScaler(), MLPClassifier())
+evaluate_classification_model_holdout([('ANN', ann)]) # 0.857 instead of 0.850649
 
 
 # MODEL TUNING
@@ -286,7 +300,7 @@ Models to be tuned:
     - XGBClassifier
 '''
 
-# LogisticRegression # 0.818
+# LogisticRegression # 0.805195
 
 logreg_model = LogisticRegression(random_state=123456)
 logreg_params = {'penalty': ['l1', 'l2'],
@@ -298,15 +312,15 @@ logreg_cv_model.best_params_ # {'C': 1, 'penalty': 'l2'}
 # Final Model
 logreg_tuned = LogisticRegression(**logreg_cv_model.best_params_).fit(X_train, y_train)
 y_pred = logreg_tuned.predict(X_test)
-accuracy_score(y_test, y_pred) # 0.8181818181818182
+accuracy_score(y_test, y_pred) # 0.8051948051948052
 
 # Visualization of Results
-plot_results(logreg_tuned, X_test, y_test)
+plot_results(logreg_tuned)
 report_results_quickly(logreg_tuned)
 plot_learning_curve(logreg_tuned)
 
 
-# RandomForestClassifier # 0.863636
+# RandomForestClassifier # 0.876623
 
 rf_model = RandomForestClassifier(random_state=123456)
 rf_params = {"n_estimators": [100, 200, 500, 1000],
@@ -315,30 +329,30 @@ rf_params = {"n_estimators": [100, 200, 500, 1000],
              "max_depth": [3, 5, 8, None]}
 
 rf_cv_model = GridSearchCV(rf_model, rf_params, cv=10, n_jobs=-1, verbose=2).fit(X_train, y_train)
-rf_cv_model.best_params_ # {'max_depth': 8, 'max_features': 5, 'min_samples_split': 10, 'n_estimators': 100}
+rf_cv_model.best_params_ # {'max_depth': 8, 'max_features': 5, 'min_samples_split': 30, 'n_estimators': 200}
 
 # Final Model
 rf_tuned = RandomForestClassifier(**rf_cv_model.best_params_).fit(X_train, y_train)
 y_pred = rf_tuned.predict(X_test)
-accuracy_score(y_test, y_pred) # 0.8766233766233766
+accuracy_score(y_test, y_pred) # 0.8831168831168831
 
 # Visualization of Results --> Feature Importances
 plot_feature_importances(rf_tuned)
 report_results_quickly(rf_tuned)
-plot_results(rf_tuned, X, y)
+plot_results(rf_tuned)
 plot_learning_curve(rf_tuned)
 
 
-# XGBClassifier # 0.863636
+# XGBClassifier # 0.883117
 
 xgb_model = XGBClassifier(random_state=123456)
 xgb_params = {"learning_rate": [0.01, 0.1, 0.2, 1],
-              "max_depth": [3, 5, 8],
+              "max_depth": [3, 5, 6, 8],
               "subsample": [0.5, 0.9, 1.0],
               "n_estimators": [100, 500, 1000]}
 
 xgb_cv_model = GridSearchCV(xgb_model, xgb_params, cv=10, n_jobs=-1, verbose=2).fit(X_train, y_train)
-xgb_cv_model.best_params_ # {'learning_rate': 0.01, 'max_depth': 8, 'min_samples_split': 0.1, 'n_estimators': 100, 'subsample': 0.9}
+xgb_cv_model.best_params_ # {'learning_rate': 0.01, 'max_depth': 6, 'n_estimators': 100, 'subsample': 0.9}
 
 # Final Model
 xgb_tuned = XGBClassifier(**xgb_cv_model.best_params_).fit(X_train, y_train)
@@ -348,11 +362,11 @@ accuracy_score(y_test, y_pred) # 0.8766233766233766
 # Visualization of Results --> Feature Importances
 plot_feature_importances(xgb_tuned)
 report_results_quickly(xgb_tuned)
-plot_results(xgb_tuned, X, y)
+plot_results(xgb_tuned)
 plot_learning_curve(xgb_tuned)
 
 
-# LightGBMClassifier # 0.863636
+# LightGBMClassifier # 0.857143
 
 lgbm_model = LGBMClassifier(random_state=123456)
 lgbm_params = {"learning_rate": [0.01, 0.03, 0.05, 0.1, 0.5],
@@ -360,12 +374,12 @@ lgbm_params = {"learning_rate": [0.01, 0.03, 0.05, 0.1, 0.5],
                "max_depth": [3, 5, 8]}
 
 lgbm_cv_model = GridSearchCV(lgbm_model, lgbm_params, cv=10, n_jobs=-1, verbose=2).fit(X_train, y_train)
-lgbm_cv_model.best_params_ # {'learning_rate': 0.01, 'max_depth': 3, 'n_estimators': 500}
+lgbm_cv_model.best_params_ # {'learning_rate': 0.01, 'max_depth': 8, 'n_estimators': 500}
 
 # Final Model
 lgbm_tuned = LGBMClassifier(**lgbm_cv_model.best_params_).fit(X_train, y_train)
 y_pred = lgbm_tuned.predict(X_test)
-accuracy_score(y_test, y_pred) # 0.8701298701298701
+accuracy_score(y_test, y_pred) # 0.8766233766233766
 
 
 # Comparison of tuned models
@@ -413,5 +427,5 @@ for model in tuned_models:
     pickle.dump(model[1], open(str(model[0]) + ".pkl", 'wb'))
 
 # Load the model that we saved before
-xgb = pickle.load(open(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\models\XGBoost', 'rb'))
+xgb = pickle.load(open(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\models\XGBoost.pkl', 'rb'))
 xgb.predict(X_test)[0:5]
