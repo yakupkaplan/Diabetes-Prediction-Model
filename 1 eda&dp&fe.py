@@ -119,8 +119,8 @@ for col in df.columns:
 ## ANALYSIS OF NUMERCIAL VARIABLES IN COMPARISON WITH EACH OTHER
 
 # Show the scatterplots for each variable and add teh dimension for Outcome, so we can differentiate between classes.
-sns.pairplot(df, hue='Outcome');
-plt.show()
+# sns.pairplot(df, hue='Outcome');
+# plt.show()
 
 # Show the correlation matrix
 plt.subplots(figsize=(15,12))
@@ -239,15 +239,15 @@ df.groupby(["BMIRanges"]).agg({"Outcome": [np.mean, np.count_nonzero, np.size]})
 sns.countplot(x='BMIRanges', hue='Outcome', data=df)
 plt.show()
 
-# # Create Age ranges --> young, mid_aged, old
-# df['Age'].describe()
-# df['AgeRanges'] = pd.cut(x=df['Age'], bins=[15, 25, 65, 81], labels=["Young", "Mid_Aged", "Senior"])
-# df['AgeRanges'] = df['AgeRanges'].astype(str)
-# df.head()
-# # See the results for the new feature
-# df.groupby(["Outcome", "AgeRanges"]).describe()
-# df[['AgeRanges']].value_counts()
-# df.groupby(["AgeRanges"]).agg({"Outcome": [np.mean, np.count_nonzero, np.size]}) # Super!
+# Create Age ranges --> young, mid_aged, old
+df['Age'].describe()
+df['AgeRanges'] = pd.cut(x=df['Age'], bins=[15, 25, 65, 81], labels=["Young", "Mid_Aged", "Senior"])
+df['AgeRanges'] = df['AgeRanges'].astype(str)
+df.head()
+# See the results for the new feature
+df.groupby(["Outcome", "AgeRanges"]).describe()
+df[['AgeRanges']].value_counts()
+df.groupby(["AgeRanges"]).agg({"Outcome": [np.mean, np.count_nonzero, np.size]}) # Super!
 
 # Create Insulin/Glucose ranges --> low, normla, secret, high
 df['Glucose'].describe()
@@ -294,7 +294,7 @@ len(new_cols_ohe)
 df.info()
 
 # Export the dataset for later use by modeling
-df.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared.csv')
+df.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared.csv', index=False)
 
 
 # STANDARDIZATION
@@ -356,9 +356,9 @@ df.info()
 
 # Export the dataset for later use by modeling
 #df.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared.csv')
-df_minmax_scaled.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared_minmaxscaled.csv')
-df_std_scaled.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared_stdscaled.csv')
-df_robust_scaled.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared_robustscaled.csv')
+df_minmax_scaled.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared_minmaxscaled.csv', index=False)
+df_std_scaled.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared_stdscaled.csv', index=False)
+df_robust_scaled.to_csv(r'C:\Users\yakup\PycharmProjects\dsmlbc\projects\diabetes_classification\diabetes_prepared_robustscaled.csv', index=False)
 
 
 
