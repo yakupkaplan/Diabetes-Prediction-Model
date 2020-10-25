@@ -4,7 +4,7 @@
 
 '''
 Steps to follow:
-    - Load the dsaved dataset
+    - Load the saved dataset
     - General View
     - Modeling
         - Base models: LogisticRegression, GaussianNB, KNeighborsClassifier, SVC, MLPClassifier, DecisionTreeClassifier,
@@ -172,20 +172,18 @@ base_models = [('LogisticRegression', LogisticRegression()),
                ("NGBoost", NGBClassifier(verbose=False))]
 
 evaluate_classification_model_cross_validation(base_models, X, y)
-# LogisticRegression: 0.742191
-# Naive Bayes: 0.620984
-# KNN: 0.783903
-# SVM: 0.814901
-# ANN: 0.770950
-# CART: 0.799624
-# BaggedTrees: 0.876333
-# RF: 0.878982
-# AdaBoost: 0.770437
-# GBM: 0.878982
-# XGBoost: 0.876435
-# LightGBM: 0.871206
-# CatBoost: 0.880280
-# NGBoost: 0.301248
+# LogisticRegression: 0.773462
+# Naive Bayes: 0.585800
+# KNN: 0.851538
+# SVM: 0.847556
+# ANN: 0.837218
+# CART: 0.845147
+# BaggedTrees: 0.881562
+# RF: 0.880229
+# AdaBoost: 0.864610
+# GBM: 0.886791
+# XGBoost: 0.877683
+# LightGBM: 0.877700
 
 # For some distance-based models, we need to scale the features in order to
 # increase the speed and the performance/accuracy level of the model.
@@ -194,24 +192,24 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import RobustScaler, StandardScaler, MinMaxScaler
 
 # LogisticRegression with make_pipeline
-logreg = make_pipeline(RobustScaler(), LogisticRegression())
-evaluate_classification_model_cross_validation([('LogisticRegression', logreg)], X, y) # 0.772 instead of 0.742
+logreg = make_pipeline(MinMaxScaler(), LogisticRegression())
+evaluate_classification_model_cross_validation([('LogisticRegression', logreg)], X, y) # 0.776 instead of 0.773462
 
 # KNN with make_pipeline
 knn = make_pipeline(RobustScaler(), KNeighborsClassifier())
-evaluate_classification_model_cross_validation([('KNN', knn)], X, y) # 0.814 instead of 0.784
+evaluate_classification_model_cross_validation([('KNN', knn)], X, y) # 0.818 instead of 0.851538
 
 # SVC with make_pipeline
 svc = make_pipeline(RobustScaler(), SVC())
-evaluate_classification_model_cross_validation([('SVM', svc)], X, y) # 0.857 instead of 0.815
+evaluate_classification_model_cross_validation([('SVM', svc)], X, y) # 0.852 instead of 0.847556
 
 # ANN with make_pipeline
-ann = make_pipeline(RobustScaler(), MLPClassifier())
-evaluate_classification_model_cross_validation([('ANN', ann)], X, y) # 0.840 instead of 0.771
+ann = make_pipeline(StandardScaler(), MLPClassifier())
+evaluate_classification_model_cross_validation([('ANN', ann)], X, y) # 0.845 instead of 0.837218
 
 # NGBClassifier with make_pipeline
 ngb = make_pipeline(RobustScaler(), NGBClassifier())
-evaluate_classification_model_cross_validation([('NGBoost', ngb)], X, y) # 0.839 instead of 0.771
+evaluate_classification_model_cross_validation([('NGBoost', ngb)], X, y) #
 
 
 # MODEL TUNING
@@ -224,7 +222,7 @@ Models to be tuned:
     - XGBClassifier
 '''
 
-# LogisticRegression # 0.742191
+# LogisticRegression # 0.773462
 
 logreg_model = LogisticRegression(random_state=12345)
 logreg_params = {'penalty': ['l1', 'l2'],
@@ -235,14 +233,14 @@ logreg_cv_model.best_params_ # {'C': 25, 'penalty': 'l2'}
 
 # Final Model
 logreg_tuned = LogisticRegression(**logreg_cv_model.best_params_).fit(X,y)
-cross_val_score(logreg_tuned, X, y, cv=10).mean() # 0.7603725222146275
+cross_val_score(logreg_tuned, X, y, cv=10).mean() # 0.7786739576213261
 
 # Visualization of Results --> Feature Importances
 confusion_matrix(y, logreg_tuned.predict(X))
 plot_roc_auc_curve(logreg_tuned)
 
 
-# RandomForestClassifier # 0.878964
+# RandomForestClassifier # 0.880229
 
 rf_model = RandomForestClassifier(random_state=12345)
 rf_params = {"n_estimators": [100, 200, 500, 1000],
@@ -251,11 +249,11 @@ rf_params = {"n_estimators": [100, 200, 500, 1000],
             "max_depth": [3, 5, 8, None]}
 
 rf_cv_model = GridSearchCV(rf_model, rf_params, cv=10, n_jobs=-1, verbose=2).fit(X, y)
-rf_cv_model.best_params_ # {'max_depth': 8, 'max_features': 5, 'min_samples_split': 30, 'n_estimators': 100}
+rf_cv_model.best_params_ # {'max_depth': None, 'max_features': 5, 'min_samples_split': 2, 'n_estimators': 500}
 
 # Final Model
 rf_tuned = RandomForestClassifier(**rf_cv_model.best_params_).fit(X,y)
-cross_val_score(rf_tuned, X, y, cv=10).mean() # 0.7656015037593985
+cross_val_score(rf_tuned, X, y, cv=10).mean() # 0.886790840738209
 
 # Visualization of Results --> Feature Importances
 plot_feature_importances(rf_tuned)
@@ -263,7 +261,7 @@ confusion_matrix(y, rf_tuned.predict(X))
 plot_roc_auc_curve(rf_tuned)
 
 
-# XGBClassifier # 0.876435
+# XGBClassifier # 0.877683
 
 xgb_model = XGBClassifier()
 xgb_params = {"learning_rate": [0.1, 0.01, 1],
@@ -272,11 +270,11 @@ xgb_params = {"learning_rate": [0.1, 0.01, 1],
              "colsample_bytree": [0.3, 0.6, 1]}
 
 xgb_cv_model = GridSearchCV(xgb_model, xgb_params, cv=10, n_jobs=-1, verbose=2).fit(X, y)
-xgb_cv_model.best_params_ # {'colsample_bytree': 1, 'learning_rate': 0.01, 'max_depth': "5", 'n_estimators': 500}
+xgb_cv_model.best_params_ # {'colsample_bytree': 0.6, 'learning_rate': 0.1, 'max_depth': 2, 'n_estimators': 100}
 
 # Final Model
 xgb_tuned = XGBClassifier(**xgb_cv_model.best_params_).fit(X,y)
-cross_val_score(xgb_tuned, X, y, cv=10).mean() # 0.894565960355434
+cross_val_score(xgb_tuned, X, y, cv=10).mean() # 0.895933014354067
 
 # Visualization of Results --> Feature Importances
 plot_feature_importances(xgb_tuned)
@@ -284,7 +282,7 @@ confusion_matrix(y, xgb_tuned.predict(X))
 plot_roc_auc_curve(xgb_tuned)
 
 
-# LightGBMClassifier # 0.871206
+# LightGBMClassifier # 0.877700
 
 lgbm_model = LGBMClassifier()
 lgbm_params = {"learning_rate": [0.01, 0.05, 0.1],
@@ -293,11 +291,11 @@ lgbm_params = {"learning_rate": [0.01, 0.05, 0.1],
               "colsample_bytree": [1,0.5,0.3]}
 
 lgbm_cv_model = GridSearchCV(lgbm_model, lgbm_params, cv=10, n_jobs=-1, verbose=2).fit(X, y)
-lgbm_cv_model.best_params_ # {'colsample_bytree': 1, 'learning_rate': 0.01, 'max_depth': 8, 'n_estimators': 200}
+lgbm_cv_model.best_params_ # {'colsample_bytree': 0.05, 'learning_rate': 0.01, 'max_depth': 5, 'n_estimators': 800}
 
 # Final Model
 lgbm_tuned = LGBMClassifier(**lgbm_cv_model.best_params_).fit(X, y)
-cross_val_score(lgbm_tuned, X, y, cv=10).mean() # 0.8946001367053997
+cross_val_score(lgbm_tuned, X, y, cv=10).mean() # 0.8971804511278195
 
 # Visualization of Results --> Feature Importances
 plot_feature_importances(lgbm_tuned)
@@ -323,6 +321,12 @@ for name, model in tuned_models:
     names.append(name)
     msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
     print(msg)
+
+# LogisticRegression: 0.778674 (0.038794)
+# RF: 0.884176 (0.033919)
+# XGBoost: 0.895933 (0.027015)
+# LightGBM: 0.897180 (0.029169)
+
 
 # boxplot algorithm comparison
 fig = plt.figure(figsize=(15, 10))
