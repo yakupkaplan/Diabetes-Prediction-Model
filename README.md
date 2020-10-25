@@ -1,40 +1,50 @@
-# Diabetes-Prediction-Model
+DIABETES PREDICTION MODEL
 
-In this project we will try to predict if the person has diabetes has or not.
+Dataset to be used : https://www.kaggle.com/uciml/pima-indians-diabetes-database
 
-Steps for __Exploratory Data Analysis, Data Visualization, Data Preprocessing and Feature Engineering__:
+1. Exploratory Data Analysis and Data Visualization 
 
-    - GENERAL / GENERAL OVERVIEW / GENERAL PICTURE
-    
-    - NUMERICAL VARIABLE ANALYSIS
-        describe with quantiles to see whether there are extraordinary values or not
-        Basic visualization by using histograms
-        
-    - TARGET ANALYSIS
-        Target analysis according to categorical variables 
-        Target analysis according to numerical variables 
-        
-    - ANALYSIS OF NUMERCIAL VARIABLES IN COMPARISON WITH EACH OTHER
-        scatterplot
-        lmplot
-        correlation
-        
-    - OUTLIER ANALYSIS
-    
-    - MISSING VALUES ANALYSIS
-    
-    - NEW FEATURES CREATION    
-    
-    - LABEL AND ONE HOT ENCODING
-    
-    - STANDARDIZATION
-    
-    - SAVING THE DATASET
-    
-__MODELING__
+- General View
+- Categorical Variables Analysis
+- Numerical Variables Analysis
+- Target Analysis
 
-__MODEL EVALUATION__
+2. Data Preprocessing and Feature Engineering 
 
-__MODEL TUNING__
+- General View - Recap - Remember Dataset
+- Outlier Analysis
+- Missing Values Analysis
+- Feature Creation
+- Label and/or One Hot Encoding
+- Standardization
+- Save the Final Dataset --> Pickle Dataset
 
-__PRESANTATION OF RESULTS__
+3. Modeling
+
+- Logistic Regression
+- Naive Bayes Classifier
+- K-Nearest Neighbors Classifier
+- Support Vector Machines
+- Artificial Neural Network Models
+- DecisionTreeClassifier
+- BaggingClassifier
+- RandomForestClassifier
+- AdaBoostClassifier
+- Gradient Boosting Classifier    
+- XGBoost - XGBClassifier
+- LightGBM - LGBMClassifier
+- CatBoost - CatBoostClassifier
+- NGBoost - NGBClassifier
+
+4. Pickle the Models, Saving the Model for later Use
+
+5. Comparison of Regression Metrics of each Model
+
+--> For each model steps to follow;
+
+- Model and Prediction
+- Evaluation of Model
+- Model Tuning
+- Model Visualization (Feature Importances, ROC/AUC Curve, Confusion Matrix, etc.)
+- Saving the Model
+
