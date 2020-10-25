@@ -1,15 +1,15 @@
-DIABETES PREDICTION MODEL
+__DIABETES PREDICTION MODEL__
 
 Dataset to be used : https://www.kaggle.com/uciml/pima-indians-diabetes-database
 
-1. Exploratory Data Analysis and Data Visualization 
+__1. Exploratory Data Analysis and Data Visualization__
 
 - General View
 - Categorical Variables Analysis
 - Numerical Variables Analysis
 - Target Analysis
 
-2. Data Preprocessing and Feature Engineering 
+__2. Data Preprocessing and Feature Engineering__ 
 
 - General View - Recap - Remember Dataset
 - Outlier Analysis
@@ -19,7 +19,7 @@ Dataset to be used : https://www.kaggle.com/uciml/pima-indians-diabetes-database
 - Standardization
 - Save the Final Dataset --> Pickle Dataset
 
-3. Modeling
+__3. Modeling__
 
 - Logistic Regression
 - Naive Bayes Classifier
@@ -36,9 +36,9 @@ Dataset to be used : https://www.kaggle.com/uciml/pima-indians-diabetes-database
 - CatBoost - CatBoostClassifier
 - NGBoost - NGBClassifier
 
-4. Pickle the Models, Saving the Model for later Use
+__4. Pickle the Models, Saving the Model for later Use__
 
-5. Comparison of Regression Metrics of each Model
+__5. Comparison of Regression Metrics of each Model__
 
 --> For each model steps to follow;
 
