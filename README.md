@@ -38,7 +38,7 @@ __3. Modeling__
 
 __4. Pickle the Models, Saving the Model for later Use__
 
-__5. Comparison of Regression Metrics of each Model__
+__5. Comparison of Metrics of each Model__
 
 --> For each model steps to follow;
 
